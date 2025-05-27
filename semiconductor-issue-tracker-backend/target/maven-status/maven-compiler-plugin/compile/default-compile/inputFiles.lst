@@ -1,0 +1,13 @@
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/mapper/ActionItemMapper.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/model/InformAttachment.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/config/WebConfig.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/model/ActionItem.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/controller/ActionItemController.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/model/CommentAttachment.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/IssueTrackerApplication.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/controller/InformController.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/model/Comment.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/service/InformService.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/model/Inform.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/mapper/InformMapper.java
+/Users/duckho/cline/semiconductor-issue-tracker-backend/src/main/java/com/semiconductor/issuetracker/service/ActionItemService.java

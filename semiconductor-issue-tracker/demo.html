@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>반도체 설비 관리 시스템 v2 - 데모</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        success: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        warning: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.5) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status-normal {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .status-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .status-critical {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 0.5rem;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease;
+        }
+        .progress-success {
+            background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
+        }
+        .progress-warning {
+            background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+        }
+        .progress-danger {
+            background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 네비게이션 -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-primary-100/50 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold gradient-text">반도체 설비 관리 v2</h1>
+                </div>
+                <div class="flex space-x-1">
+                    <a href="#" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md">
+                        📊 대시보드
+                    </a>
+                    <a href="#" class="text-secondary-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        ⚙️ 설비 목록
+                    </a>
+                    <a href="#" class="text-secondary-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        🕒 변경 추적
+                    </a>
+                    <a href="#" class="text-secondary-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        🔔 알림
+                        <span class="ml-2 bg-danger-500 text-white text-xs rounded-full px-2 py-0.5">3</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <span class="w-6 h-6 text-secondary-600 cursor-pointer">🔔</span>
+                        <span class="absolute -top-1 -right-1 bg-danger-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm">👤</span>
+                        </div>
+                        <div class="text-sm">
+                            <div class="font-medium text-secondary-900">관리자</div>
+                            <div class="text-secondary-500">공장 관리팀</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="space-y-6 animate-fade-in">
+            <!-- 페이지 헤더 -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold gradient-text">대시보드</h1>
+                    <p class="mt-1 text-secondary-600">반도체 설비 현황 및 예측 분석 - 편안한 파란색 테마</p>
+                </div>
+                <div class="mt-4 sm:mt-0 text-sm text-secondary-500">
+                    마지막 업데이트: 2025. 05. 23 11:05
+                </div>
+            </div>
+
+            <!-- 주요 지표 카드 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="metric-card rounded-xl p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg">
+                            <span class="text-white text-xl">⚙️</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-secondary-600">총 설비 수</p>
+                            <div class="flex items-baseline">
+                                <p class="text-2xl font-semibold text-secondary-900">24</p>
+                                <p class="ml-2 text-sm text-secondary-500">대</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-gradient-to-r from-success-500 to-success-600 rounded-lg">
+                            <span class="text-white text-xl">✅</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-secondary-600">정상 가동</p>
+                            <div class="flex items-baseline">
+                                <p class="text-2xl font-semibold text-secondary-900">20</p>
+                                <p class="ml-2 text-sm text-success-600 font-medium">↑5%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-gradient-to-r from-warning-500 to-warning-600 rounded-lg">
+                            <span class="text-white text-xl">⚠️</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-secondary-600">경고 상태</p>
+                            <div class="flex items-baseline">
+                                <p class="text-2xl font-semibold text-secondary-900">3</p>
+                                <p class="ml-2 text-sm text-warning-600 font-medium">↓12%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-gradient-to-r from-danger-500 to-danger-600 rounded-lg">
+                            <span class="text-white text-xl">❌</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-secondary-600">점검 필요</p>
+                            <div class="flex items-baseline">
+                                <p class="text-2xl font-semibold text-secondary-900">1</p>
+                                <p class="ml-2 text-sm text-danger-600 font-medium">↓25%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 차트 및 알림 섹션 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 설비 상태 분포 차트 -->
+                <div class="lg:col-span-2 card rounded-xl p-6">
+                    <div class="bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-t-xl p-4 -m-6 mb-4">
+                        <h3 class="text-lg font-semibold">설비 상태 분포</h3>
+                    </div>
+                    <div class="h-64 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg">
+                        <div class="text-center">
+                            <div class="text-6xl text-primary-400 mb-2">📊</div>
+                            <p class="text-primary-600 font-medium">도넛 차트 (Chart.js)</p>
+                            <p class="text-sm text-primary-500 mt-1">실시간 설비 상태 분포</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 실시간 알림 -->
+                <div class="card rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-secondary-900">실시간 알림</h3>
+                        <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">전체 보기</a>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-4 rounded-lg border-l-4 border-danger-400 bg-danger-50">
+                            <div class="flex items-start">
+                                <span class="text-danger-600 mr-3 mt-0.5">❌</span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-danger-800">CVD-001</p>
+                                    <p class="text-sm text-danger-700">온도 센서 이상 감지</p>
+                                    <p class="text-xs text-danger-600 mt-1">09:35</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg border-l-4 border-warning-400 bg-warning-50">
+                            <div class="flex items-start">
+                                <span class="text-warning-600 mr-3 mt-0.5">⚠️</span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-warning-800">ETCH-003</p>
+                                    <p class="text-sm text-warning-700">압력 수치 임계값 근접</p>
+                                    <p class="text-xs text-warning-600 mt-1">09:20</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg border-l-4 border-primary-400 bg-primary-50">
+                            <div class="flex items-start">
+                                <span class="text-primary-600 mr-3 mt-0.5">ℹ️</span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-primary-800">CMP-002</p>
+                                    <p class="text-sm text-primary-700">예방 정비 일정 알림</p>
+                                    <p class="text-xs text-primary-600 mt-1">08:35</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 예측 알림 트렌드 -->
+            <div class="card rounded-xl p-6">
+                <div class="bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-t-xl p-4 -m-6 mb-4">
+                    <h3 class="text-lg font-semibold">예측 알림 트렌드</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="h-48 flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg">
+                        <div class="text-center">
+                            <div class="text-5xl text-primary-400 mb-2">📈</div>
+                            <p class="text-primary-600 font-medium">라인 차트 (Chart.js)</p>
+                            <p class="text-sm text-primary-500 mt-1">최근 7일 알림 트렌드</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg">
+                            <div>
+                                <p class="text-sm font-medium text-primary-800">오늘 예측 알림</p>
+                                <p class="text-2xl font-bold text-primary-900">8</p>
+                            </div>
+                            <span class="text-4xl text-primary-600">📊</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
+                            <div>
+                                <p class="text-sm font-medium text-success-800">예방 정비 완료</p>
+                                <p class="text-2xl font-bold text-success-900">12</p>
+                            </div>
+                            <span class="text-4xl text-success-600">✅</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주요 설비 현황 -->
+            <div class="card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-secondary-900">주요 설비 현황</h3>
+                    <a href="#" class="bg-white hover:bg-primary-50 text-primary-600 border border-primary-200 hover:border-primary-300 font-medium py-2.5 px-5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">전체 보기</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-secondary-200">
+                        <thead class="bg-gradient-to-r from-primary-50 to-primary-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-primary-800 uppercase tracking-wider">설비명</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-primary-800 uppercase tracking-wider">상태</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-primary-800 uppercase tracking-wider">가동률</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-primary-800 uppercase tracking-wider">예측</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-primary-800 uppercase tracking-wider">마지막 점검</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-primary-800 uppercase tracking-wider">랏 이력</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-secondary-200">
+                            <tr class="hover:bg-primary-50/50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-secondary-900">CVD-001</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-critical">위험</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="text-sm text-secondary-900 mr-2">85%</div>
+                                        <div class="progress-bar w-16">
+                                            <div class="progress-fill progress-warning" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-critical">위험</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">05.16</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">📋 랏 이력</a>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-primary-50/50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-secondary-900">ETCH-003</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-warning">경고</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="text-sm text-secondary-900 mr-2">92%</div>
+                                        <div class="progress-bar w-16">
+                                            <div class="progress-fill progress-success" style="width: 92%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-warning">주의</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">05.09</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">📋 랏 이력</a>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-primary-50/50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-secondary-900">CMP-002</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-normal">정상</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="text-sm text-secondary-900 mr-2">98%</div>
+                                        <div class="progress-bar w-16">
+                                            <div class="progress-fill progress-success" style="width: 98%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-normal">안전</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">05.20</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">📋 랏 이력</a>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-primary-50/50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-secondary-900">LITHO-001</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-normal">정상</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="text-sm text-secondary-900 mr-2">96%</div>
+                                        <div class="progress-bar w-16">
+                                            <div class="progress-fill progress-success" style="width: 96%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-normal">안전</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">05.18</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">📋 랏 이력</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AI 예측 분석 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card rounded-xl p-6 bg-gradient-to-br from-danger-50 to-danger-100 border-danger-200">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl text-danger-600 mr-2">⚠️</span>
+                        <h3 class="text-lg font-semibold text-danger-800">고장 예측</h3>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-3xl font-bold text-danger-900 mb-2">72시간 내</p>
+                        <p class="text-sm text-danger-700">온도 센서 이상 패턴 감지</p>
+                        <p class="text-xs text-danger-600 mt-2">신뢰도: 87%</p>
+                    </div>
+                </div>
+
+                <div class="card rounded-xl p-6 bg-gradient-to-br from-warning-50 to-warning-100 border-warning-200">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl text-warning-600 mr-2">🔧</span>
+                        <h3 class="text-lg font-semibold text-warning-800">정비 권장</h3>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-3xl font-bold text-warning-900 mb-2">5일 내</p>
+                        <p class="text-sm text-warning-700">압력 밸브 교체 필요</p>
+                        <p class="text-xs text-warning-600 mt-2">우선순위: 높음</p>
+                    </div>
+                </div>
+
+                <div class="card rounded-xl p-6 bg-gradient-to-br from-success-50 to-success-100 border-success-200">
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl text-success-600 mr-2">📈</span>
+                        <h3 class="text-lg font-semibold text-success-800">효율성 개선</h3>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-3xl font-bold text-success-900 mb-2">+3.2%</p>
+                        <p class="text-sm text-success-700">공정 파라미터 최적화 가능</p>
+                        <p class="text-xs text-success-600 mt-2">예상 절약: 15%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기술 스택 정보 -->
+            <div class="card rounded-xl p-6 bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200">
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-bold gradient-text mb-2">기술 스택</h3>
+                    <p class="text-secondary-600">편안한 파란색 테마를 적용한 반도체 설비 관리 시스템 v2</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-white/50 rounded-lg">
+                        <div class="text-2xl mb-2">⚡</div>
+                        <p class="text-sm font-medium text-secondary-900">Vue.js 3</p>
+                        <p class="text-xs text-secondary-600">Composition API</p>
+                    </div>
+                    <div class="text-center p-4 bg-white/50 rounded-lg">
+                        <div class="text-2xl mb-2">🎨</div>
+                        <p class="text-sm font-medium text-secondary-900">Tailwind CSS</p>
+                        <p class="text-xs text-secondary-600">편안한 파란색 테마</p>
+                    </div>
+                    <div class="text-center p-4 bg-white/50 rounded-lg">
+                        <div class="text-2xl mb-2">📱</div>
+                        <p class="text-sm font-medium text-secondary-900">반응형 UI</p>
+                        <p class="text-xs text-secondary-600">모바일 최적화</p>
+                    </div>
+                    <div class="text-center p-4 bg-white/50 rounded-lg">
+                        <div class="text-2xl mb-2">🤖</div>
+                        <p class="text-sm font-medium text-secondary-900">AI 예측</p>
+                        <p class="text-xs text-secondary-600">고장 예측 분석</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주요 기능 -->
+            <div class="card rounded-xl p-6">
+                <h3 class="text-xl font-bold gradient-text mb-6 text-center">주요 기능</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="text-center p-4 border border-primary-200 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-3">📊</div>
+                        <h4 class="font-semibold text-secondary-900 mb-2">실시간 대시보드</h4>
+                        <p class="text-sm text-secondary-600">설비 현황 및 KPI 모니터링</p>
+                    </div>
+                    <div class="text-center p-4 border border-primary-200 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-3">⚙️</div>
+                        <h4 class="font-semibold text-secondary-900 mb-2">설비 관리</h4>
+                        <p class="text-sm text-secondary-600">설비별 상세 정보 및 센서 데이터</p>
+                    </div>
+                    <div class="text-center p-4 border border-primary-200 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-3">📋</div>
+                        <h4 class="font-semibold text-secondary-900 mb-2">랏 진행 이력</h4>
+                        <p class="text-sm text-secondary-600">설비별 랏 처리 현황 및 이력</p>
+                    </div>
+                    <div class="text-center p-4 border border-primary-200 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-3">🕒</div>
+                        <h4 class="font-semibold text-secondary-900 mb-2">변경 추적</h4>
+                        <p class="text-sm text-secondary-600">설비 변경 이력 및 추적 관리</p>
+                    </div>
+                    <div class="text-center p-4 border border-primary-200 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-3">🔔</div>
+                        <h4 class="font-semibold text-secondary-900 mb-2">알림 관리</h4>
+                        <p class="text-sm text-secondary-600">실시간 알림 및 AI 예측 분석</p>
+                    </div>
+                    <div class="text-center p-4 border border-primary-200 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-3">🤖</div>
+                        <h4 class="font-semibold text-secondary-900 mb-2">AI 예측 분석</h4>
+                        <p class="text-sm text-secondary-600">고장 예측 및 정비 권장</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-primary-100/50 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center">
+                <p class="text-secondary-600">반도체 설비 관리 시스템 v2 - 편안한 파란색 테마</p>
+                <p class="text-sm text-secondary-500 mt-2">Vue.js 3 + Tailwind CSS + 반응형 UI</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

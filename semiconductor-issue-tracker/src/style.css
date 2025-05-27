@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-blue-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800 text-secondary-900 dark:text-gray-100 font-sans transition-colors duration-300;
+  }
+  
+  * {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-soft border border-blue-100/50 dark:border-gray-700/50 p-6 transition-all duration-300 hover:shadow-soft-lg hover:border-blue-200/70 dark:hover:border-gray-600/70;
+  }
+  
+  .card-header {
+    @apply bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-xl p-4 -m-6 mb-4;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-blue-50 text-blue-600 border border-blue-200 hover:border-blue-300 font-medium py-2.5 px-5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+  
+  .btn-ghost {
+    @apply text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
+  }
+  
+  .status-normal {
+    @apply bg-gradient-to-r from-success-100 to-success-200 text-success-800 border border-success-300/50;
+  }
+  
+  .status-warning {
+    @apply bg-gradient-to-r from-warning-100 to-warning-200 text-warning-800 border border-warning-300/50;
+  }
+  
+  .status-critical {
+    @apply bg-gradient-to-r from-danger-100 to-danger-200 text-danger-800 border border-danger-300/50;
+  }
+  
+  .status-maintenance {
+    @apply bg-gradient-to-r from-secondary-100 to-secondary-200 text-secondary-800 border border-secondary-300/50;
+  }
+  
+  .nav-link {
+    @apply inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg;
+  }
+  
+  .nav-link-active {
+    @apply bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md;
+  }
+  
+  .nav-link-inactive {
+    @apply text-secondary-600 hover:text-blue-600 hover:bg-blue-50;
+  }
+  
+  .metric-card {
+    @apply bg-gradient-to-br from-white to-blue-50/50 rounded-xl p-6 border border-blue-100/50 shadow-soft hover:shadow-soft-lg transition-all duration-300;
+  }
+  
+  .progress-bar {
+    @apply w-full bg-secondary-200 rounded-full h-2.5 overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-500 ease-out;
+  }
+  
+  .progress-success {
+    @apply bg-gradient-to-r from-success-400 to-success-500;
+  }
+  
+  .progress-warning {
+    @apply bg-gradient-to-r from-warning-400 to-warning-500;
+  }
+  
+  .progress-danger {
+    @apply bg-gradient-to-r from-danger-400 to-danger-500;
+  }
+  
+  .alert-card {
+    @apply p-4 rounded-lg border-l-4 transition-all duration-200 hover:shadow-md;
+  }
+  
+  .alert-info {
+    @apply bg-blue-50 border-blue-400 text-blue-800;
+  }
+  
+  .alert-warning {
+    @apply bg-warning-50 border-warning-400 text-warning-800;
+  }
+  
+  .alert-danger {
+    @apply bg-danger-50 border-danger-400 text-danger-800;
+  }
+  
+  .alert-success {
+    @apply bg-success-50 border-success-400 text-success-800;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/80 backdrop-blur-sm;
+  }
+  
+  .select-field {
+    @apply w-full px-4 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/80 backdrop-blur-sm;
+  }
+  
+  .table-header {
+    @apply bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 font-semibold;
+  }
+  
+  .table-row {
+    @apply hover:bg-blue-50/50 transition-colors duration-200;
+  }
+  
+  .glass-effect {
+    @apply bg-white/20 backdrop-blur-md border border-white/30;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent;
+  }
+  
+  .floating-card {
+    @apply transform hover:scale-105 transition-transform duration-300;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #0ea5e9, #0284c7);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #0284c7, #0369a1);
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s infinite;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .card {
+    @apply p-4;
+  }
+  
+  .metric-card {
+    @apply p-4;
+  }
+}
